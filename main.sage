@@ -110,20 +110,28 @@ x = vector(F, [a**(i-1) for i in range(1, n+1)])
 
 
 # Perform simulations 
-n_sim = 20       # Number of simulation
+n_sim = 5        # Number of simulation
 n_fail = 0       # Number of simulation where decoding failure occurs
 t = (n - k)//2
 
+# Perform simulations
 for i in range(n_sim):
     # Generate a random message of length k
     m = vector([F.random_element() for _ in range(k)])
+
+    # Encode the message
     r = encode(m,x,k)
+
+    # Decode the received message
     m_hat = decode(r, x, n, k)
+
+    # Check for decoding failure
     t_hat = sum(1 for mi, m_hat_i in zip(m, m_hat) if mi != m_hat_i)
     if t_hat > t:
         n_fail += 1
 
-print(n_fail)
-P_fail = n_fail//n_tot
+# Compute the probability of a decoding failure
+P_fail = n_fail / n_sim
+print("Probability of decoding failure:", P_fail)
 
 
