@@ -58,26 +58,72 @@ def decode(r, x, n, k):
 
 
 
+
+"""
 ##define the finite field
-a = chr(0x03B1)
+#a = chr(0x03B1)
+#global F
+#global FX
+#q = 11
+#F.<a> = FiniteField(q)
+#a = F.gen()
+#FX.<X> = PolynomialRing(F)
+
+
+
+#n = 6
+#x = vector(F, [a**(i-1) for i in range(1, n+1)])
+#x = vector(F, [1, 2, 3, 4, 5, 6])
+#k = 2
+#m = vector(F, [2, 1])
+#r = vector(F, [3, 4, 1, 6, 6, 8])
+#G = make_G(x)
+#R = make_R(r, x, n)
+#P = decode(r, x, n, k)
+#Chan = channels.StaticErrorRateChannel(F, 2)
+#print(Chan)
+"""
+
+
+## Question 4
+# Set global variables 
 global F
 global FX
-q = 11
+
+# Set known parameters
+q = 256
+n = 255
+k = 246
+
+# Define a finite field with q = 256 elements and define a as an element of the finite field
+a = chr(0x03B1)
 F.<a> = FiniteField(q)
+
+# Set a as the generator of the field
 a = F.gen()
+
+# Create polynomial ring FX with variable X where coefficients will be elements of F
 FX.<X> = PolynomialRing(F)
 
+# Generate the x vector of length n = 255 (covers all non-zero elements of our finite field using a)
+x = vector(F, [a**(i-1) for i in range(1, n+1)])
 
 
-n = 6
-#x = vector(F, [a**(i-1) for i in range(1, n+1)])
-x = vector(F, [1, 2, 3, 4, 5, 6])
-k = 2
-m = vector(F, [2, 1])
-r = vector(F, [3, 4, 1, 6, 6, 8])
-G = make_G(x)
-R = make_R(r, x, n)
-P = decode(r, x, n, k)
-Chan = channels.StaticErrorRateChannel(F, 2)
-print(Chan)
+# Perform simulations 
+n_sim = 20       # Number of simulation
+n_fail = 0       # Number of simulation where decoding failure occurs
+t = (n - k)//2
+
+for i in range(n_sim):
+    # Generate a random message of length k
+    m = vector([F.random_element() for _ in range(k)])
+    r = encode(m,x,k)
+    m_hat = decode(r, x, n, k)
+    t_hat = sum(1 for mi, m_hat_i in zip(m, m_hat) if mi != m_hat_i)
+    if t_hat > t:
+        n_fail += 1
+
+print(n_fail)
+P_fail = n_fail//n_tot
+
 
