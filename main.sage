@@ -54,7 +54,7 @@ def decode(r, x, n, k):
         P = M*P
     Q0, Q1 = Q(P, k)
     f = -Q0//Q1
-    return f.coefficients()
+    return f.coefficients(sparse=False)
 
 
 
