@@ -1,3 +1,5 @@
+from main.sage import *
+
 def T(j, l, w, n, q):
     if l+j<w or l+w<j or w+j<l:
         return 0

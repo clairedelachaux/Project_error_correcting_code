@@ -79,7 +79,7 @@ def decode(r, x, n, k):
 #P = decode(r, x, n, k)
 #Chan = channels.StaticErrorRateChannel(F, 2)
 #print(Chan)
-"""
+
 
 
 ## Question 4
@@ -130,5 +130,5 @@ for i in range(n_sim):
 # Compute the probability of a decoding failure
 P_fail = n_fail / n_sim
 print("Probability of decoding failure:", P_fail)
-
+"""
 
