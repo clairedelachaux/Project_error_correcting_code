@@ -26,11 +26,8 @@ def L(x, i, n):
     return L
 
 def make_R(r, x, n):
-    R=0
-    for i in range(n):
-        Li = L(x, i, n)
-        R += r[i]*Li
-    return R
+    points = [(x[i], r[i]) for i in range(n)]
+    return FX.lagrange_polynomial(points)
 
 def is_k_reduced(P, k):
     return P[0, 0].degree() >= P[0, 1].degree()+k-1 and P[1, 0].degree() < P[1, 1].degree()+k-1
