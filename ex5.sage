@@ -25,4 +25,42 @@ t = (n-k)//2
 
 P1 = P_error(n, k, q, p)
 
-print(P1)
+# print(P1)
+
+def sim(iterations, k):
+    # counters of errors and failures
+    errors = 0
+    failures = 0
+
+    # create code with k as input
+    [encoder, decoder] = createCode(k)
+    
+    for i in range(iterations):
+        # create random message
+        m = vector(F, [F.random_element() for i in range(k)])
+
+        # encode message
+        c = encoder(m)
+
+        # create error with computed error distribution and recieved word
+        e = vector(F, [F.random_element() if error_dist.get_random_element()==0 else 0 for i in range(n)])
+        if i % 500 == 0:
+            print("iteration:", i, "\t decoding failures so far:", failures, "\t decoding errors so far:", errors)
+        r = c + e
+
+        # decode recieved word
+        f = decoder(r)
+
+        # check if sent word and recieved word is the same
+        if not list(m) == list(f)+[0]*(len(m)-len(list(f))):
+            failures += 1
+            if not f == "fail": 
+                errors += 1
+                print("Oh no! Error at iteration", i)
+                print("\t Hamming weight of current error vector: ", e.hamming_weight())
+            else: 
+                print("Phew! Just a failure at iteration", i)
+                print("\t Hamming weight of current error vector: ", e.hamming_weight())
+    return [failures, errors]
+
+
