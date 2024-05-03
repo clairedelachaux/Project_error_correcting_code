@@ -52,7 +52,7 @@ def decode(r, x, n, k):
         M = matrix(FX, [[0, 1], [1, -q]])
         P = M*P
     Q0, Q1 = Q(P, k)
-    if Q0%Q1 !=0:
+    if Q0%Q1 !=0 or Q0.degree()-Q1.degree()>=k:
         return "fail"
     f = -Q0//Q1
     return f.coefficients(sparse=False)
@@ -81,10 +81,11 @@ def sim(iterations, k):
     # counters of errors and failures
     errors = 0
     failures = 0
+    # Initialization of the error distribution (Bernouilli distribution)
     p = 0.007976
     P = [p, 1-p]
     error_dist=GeneralDiscreteDistribution(P)
-    
+
     for i in range(iterations):
         x = vector(F, [alpha**(i-1) for i in range(1, n+1)])
         # create random message
@@ -93,26 +94,25 @@ def sim(iterations, k):
         # encode message
         c = encode(m, x, k)
 
-        # create error with computed error distribution
+        # create error with computed error distribution and recieved word
         e = vector(F, [F.random_element() if error_dist.get_random_element()==0 else 0 for i in range(n)])
-
-        # compute recieved word
+        if i % 500 == 0:
+            print("iteration:", i, "\t decoding failures so far:", failures, "\t decoding errors so far:", errors)
         r = c + e
 
         # decode recieved word
         f = decode(r, x, n, k)
 
         # check if sent word and recieved word is the same
-        if list(m) != list(f):
+        if not list(m) == list(f)+[0]*(len(m)-len(list(f))):
             failures += 1
-            # look if it is an error
-            if f == "fail": 
-                print("Failure at iteration", i)
-            else: 
+            #See if it is an error
+            if not f == "fail": 
                 errors += 1
-                print("Error at iteration", i)
+                print("Error at iteration", i, "the number of byte modified was", e.hamming_weight())
+            else: 
+                print("Failure at iteration", i, "the number of byte modified was", e.hamming_weight())
     return [failures, errors]
-
 
 
 ## Question 4
